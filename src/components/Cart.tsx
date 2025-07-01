@@ -26,9 +26,21 @@ const Cart = () => {
       quantity: Math.max(1, prev.quantity + change)
     }));
   };
-
   const handleWhatsAppOrder = () => {
     const total = (productPrice * formData.quantity).toFixed(2);
+
+    // ✅ FIRE FACEBOOK PURCHASE EVENT
+    interface WindowWithFbq extends Window {
+      fbq?: (event: string, action: string, data: { value: string; currency: string }) => void;
+    }
+    const win = window as WindowWithFbq;
+    if (typeof window !== "undefined" && typeof win.fbq === "function") {
+      win.fbq('track', 'Purchase', {
+        value: total,
+        currency: 'USD' // Change this if needed
+      });
+    }
+
     const message = `Hello! I would like to order BREATHEX Lung Flexer:
 
 📦 Product: BREATHEX Lung Flexer
